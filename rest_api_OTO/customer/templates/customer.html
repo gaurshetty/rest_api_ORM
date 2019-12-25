@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Customer Information Form</title>
+</head>
+<body>
+    <h2>Customer Registration Page</h2>
+    {{msg1}}<br>
+    {{msg2}}<br>
+    <form action="http://localhost:5001/customer/save/" method="post">
+        <h3>Customer Information:</h3>
+        Customer Id: <input type="text" name="cid" value="{{customer.id}}" readonly><br><br>
+        Customer Name: <input type="text" name="name" value="{{customer.name}}"><br><br>
+        Customer Age: <input type="text" name="age" value="{{customer.age}}"><br><br>
+        Customer Gender: <input type="text" name="gender" value="{{customer.gender}}"><br><br>
+        Customer email: <input type="text" name="email" value="{{customer.email}}"><br>
+        <h3>Address Information:</h3>
+        Address id : <input type="text" name="aid" value="{{address.id}}" readonly><br><br>
+        Address city : <input type="text" name="city" value="{{address.city}}"><br><br>
+        Address state : <input type="text" name="state" value="{{address.state}}"><br><br>
+        Address pincode : <input type="text" name="pincode" value="{{address.pincode}}"><br><br>
+        <br>
+        <input type="submit">
+    </form>
+    <br><br>
+    {% if customers %}
+        <table border="1">
+            <thead>
+                <th>ID</th><th>Name</th><th>Age</th><th>Gender</th><th>Email</th><th>Address</th><th>Action</th>
+            </thead>
+            {% for customer in customers %}
+                <tbody>
+                    <td>{{ customer.id }}</td>
+                    <td>{{ customer.name }}</td>
+                    <td>{{ customer.age }}</td>
+                    <td>{{ customer.gender }}</td>
+                    <td>{{ customer.email }}</td>
+                    <td>
+                        {% if customer.address %}
+                            {{customer.address.id}}:{{customer.address.city}}:{{customer.address.pincode}}
+                        {% else %}
+                            "Null"
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="http://localhost:5001/customer/edit/{{customer.address.id}}">EDIT</a>
+                        &nbsp;&nbsp;
+                        <a href="http://localhost:5001/customer/delete/{{customer.address.id}}">DELETE</a>
+                    </td>
+                </tbody>
+            {% endfor %}
+        </table>
+    {% else %}
+        No Customer Records Available...!
+    {% endif %}
+</body>
+</html>

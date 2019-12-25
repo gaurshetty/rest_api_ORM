@@ -1,4 +1,4 @@
-from rest_api_ORM.rest_api_OTO.producer.model import *
+from rest_api_ORM1.rest_api_OTO.producer.model import *
 from flask import request
 import json
 
@@ -7,16 +7,16 @@ db.create_all()
 # http://localhost:5000/producer/customeraddresses/
 @app.route("/producer/customeraddresses/", methods=['GET'])
 def get_all_customer_address():
-    addresses=Address.query.filter_by(active='Y').all()
+    customers = Customer.query.filter_by(active='Y').all()
     all_cust_info = []
-    for adr in addresses:
-        custdict = adr.customers.as_dict()
-        custdict.pop('active')
-        cust_adr = adr.as_dict()
-        cust_adr.pop('active')
-        # cust_adr.pop('cid')
-        custdict['addresses'] = cust_adr
-        all_cust_info.append(custdict)
+    for customer in customers:
+        custlist = customer.as_dict()
+        custlist.pop('active')
+        adr = customer.addresses
+        if adr:
+            adr = adr.as_dict()
+            custlist['address'] = adr
+        all_cust_info.append(custlist)
     return json.dumps(all_cust_info)
 
 
@@ -49,7 +49,7 @@ def save_customer():
         return {"Status": "Duplicated email address {}".format(email)}
     db.session.add(cust)
     db.session.commit()
-    return {"Success": "Customer {}'s information saved successfully!".format(cust.name)}
+    return {"Success": "Customer: {} saved successfully!".format(cust.id)}
 
 
 # http://localhost:5000/producer/customer/1
@@ -67,7 +67,7 @@ def update_customer(cid):
         dbcust.email = reqdata["email"]
         dbcust.gender = reqdata["gender"]
         db.session.commit()
-        return {"Success": "Customer {}'s information updated successfully!".format(dbcust.name)}
+        return {"Success": "Customer: {} updated successfully!".format(dbcust.id)}
     else:
         return {"Status": "No customer with given id {}. Can not update..!".format(cid)}
 
@@ -79,7 +79,7 @@ def delete_customer(cid):
     if dbcust:
         dbcust.active = 'N'
         db.session.commit()
-        return {"Success": "Customer {} deleted successfully!".format(dbcust.name)}
+        return {"Success": "Customer: {} deleted successfully!".format(dbcust.name)}
     else:
         return {"Status": "No customer with given id {}. Can not delete..!".format(cid)}
 
@@ -116,7 +116,7 @@ def save_address():
         return {"Status": "Duplicated pincode: {}".format(pincode)}
     db.session.add(adr)
     db.session.commit()
-    return {"Success": "Address: {} information saved successfully!".format(adr.city)}
+    return {"Success": "Address: {} saved successfully!".format(adr.id)}
 
 
 # http://localhost:5000/producer/address/1
@@ -124,12 +124,8 @@ def save_address():
 def update_address(aid):
     dbadr = Address.query.filter_by(id=aid).first()
     reqdata = request.get_json()
-    pincode = reqdata["pincode"]
-    cid = reqdata["cid"]
+    pincode = int(reqdata["pincode"])
     if dbadr:
-        adr1 = Address.query.filter_by(cid=cid).first()
-        if dbadr.cid != cid and adr1:
-            return {"Status": "Already customer:{} assigned with address".format(adr1.customers.name)}
         adr = Address.query.filter_by(pincode=pincode).first()
         if dbadr.pincode != pincode and adr:
             return {"Status": "Duplicated pincode: {}".format(pincode)}
@@ -138,7 +134,7 @@ def update_address(aid):
         dbadr.pincode = reqdata["pincode"]
         dbadr.cid = reqdata["cid"]
         db.session.commit()
-        return {"Success": "address: {} information updated successfully!".format(dbadr.city)}
+        return {"Success": "address: {} updated successfully!".format(dbadr.id)}
     else:
         return {"Status": "No address with given id {}. Can not update..!".format(aid)}
 
