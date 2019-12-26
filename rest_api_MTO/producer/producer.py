@@ -72,7 +72,7 @@ def save_customer():
     cust = Customer(name=rd['name'], age=rd['age'], gender=rd['gender'], email=rd['email'], aid=rd['aid'])
     db.session.add(cust)
     db.session.commit()
-    return {"success": "Customer: {} saved successfully!".format(cust.id)}
+    return {"Success": "Customer: {} saved successfully!".format(cust.id)}
 
 
 # http://localhost:5000/producer/customer/101
@@ -90,7 +90,7 @@ def update_customer(cid):
         cust.email = rd['email']
         cust.aid = rd['aid']
         db.session.commit()
-        return {"success": "Customer: {} updated successfully!".format(cust.id)}
+        return {"Success": "Customer: {} updated successfully!".format(cust.id)}
     return {"Failed": "Customer with id: {} not available...".format(cid)}
 
 
@@ -101,7 +101,7 @@ def delete_customer(cid):
     if cust:
         cust.active = 'N'
         db.session.commit()
-        return {"success": "Customer: {} deleted successfully!".format(cust.id)}
+        return {"Success": "Customer: {} deleted successfully!".format(cust.id)}
     return {"Failed": "Customer with id: {} not available...".format(cid)}
 
 
@@ -138,7 +138,7 @@ def save_address():
     adr = Address(city=rd['city'], state=rd['state'], pincode=rd['pincode'])
     db.session.add(adr)
     db.session.commit()
-    return {"success": "Address: {} saved successfully!".format(adr.id)}
+    return {"Success": "Address: {} saved successfully!".format(adr.id)}
 
 
 # http://localhost:5000/producer/address/11
@@ -146,7 +146,7 @@ def save_address():
 def update_address(aid):
     adr = Address.query.filter_by(id=aid).first()
     rd = request.get_json()
-    pincode = rd["pincode"]
+    pincode = int(rd["pincode"])
     if adr:
         if adr.pincode != pincode and Address.query.filter_by(pincode=pincode).first():
             return {"Failed": "Duplicate pincode: {} provided...".format(pincode)}
@@ -154,7 +154,7 @@ def update_address(aid):
         adr.state = rd['state']
         adr.pincode = rd['pincode']
         db.session.commit()
-        return {"success": "Address: {} updated successfully!".format(adr.id)}
+        return {"Success": "Address: {} updated successfully!".format(adr.id)}
     return {"Failed": "Address with id: {} not available...".format(aid)}
 
 
@@ -165,7 +165,7 @@ def delete_address(aid):
     if adr:
         adr.active = 'N'
         db.session.commit()
-        return {"success": "Address: {} deleted successfully!".format(adr.id)}
+        return {"Success": "Address: {} deleted successfully!".format(adr.id)}
     return {"Failed": "Address with id: {} not available...".format(aid)}
 
 

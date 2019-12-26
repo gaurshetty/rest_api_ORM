@@ -33,7 +33,6 @@ class Address(db.Model):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
 
-
 if __name__ == '__main__':
     db.create_all()
     # a1 = Address(id=11, city='Pune1', state='MH', pincode=411041)
