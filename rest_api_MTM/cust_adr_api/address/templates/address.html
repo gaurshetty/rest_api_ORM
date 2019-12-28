@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Address Information Page</title>
+</head>
+<body>
+    <h1><a href="http://localhost:5001/custadr/address/home/">Address Registration form</a></h1>
+    {{msg}}
+    <br><br>
+    <form action="http://localhost:5001/custadr/address/save/" method="post">
+        Address Id: <input type="text" name="id" value="{{address.id}}" readonly><br><br>
+        Address City: <input type="text" name="city" value="{{address.city}}"><br><br>
+        Address State: <input type="text" name="state" value="{{address.state}}"><br><br>
+        Customer Pincode: <input type="text" name="pincode" value="{{address.pincode}}"><br><br>
+        <input type="submit">
+    </form>
+    <br>
+    {% if addresses %}
+        <table border="1">
+            <thead>
+                <th><a href="http://localhost:5001/custadr/address/sort/id">Id</a></th>
+                <th><a href="http://localhost:5001/custadr/sort/city">City</a></th>
+                <th>State</th>
+                <th><a href="http://localhost:5001/custadr/sort/pincode">Pincode</a></th>
+                <th>Action</th>
+            </thead>
+            {% for address in addresses %}
+                <tbody>
+                    <td>{{address.id}}</td>
+                    <td>{{address.city}}</td>
+                    <td>{{address.state}}</td>
+                    <td>{{address.pincode}}</td>
+                    <td>
+                        <a href="http://localhost:5001/custadr/address/edit/{{address.id}}">EDIT</a>
+                        &nbsp;&nbsp;
+                        <a href="http://localhost:5001/custadr/address/delete/{{address.id}}">DELETE</a>
+                    </td>
+                </tbody>
+            {% endfor %}
+        </table>
+    {% else %}
+        No Address Records available...!
+    {% endif %}
+</body>
+</html>

@@ -12,7 +12,7 @@ def get_all_customers_with_addresses():
         cust1 = cust.as_dict()
         cust1.pop('active')
         adrs = cust.custadr
-        adrlist= []
+        adrlist = []
         if adrs:
             for adr in adrs:
                 ad = adr.addresses
@@ -105,6 +105,35 @@ def save_customer():
     return {"Success": "Customer: {} saved successfully!".format(cust.id)}
 
 
+# http://localhost:5000/producer/customer/101
+@app.route("/producer/customer/<int:cid>", methods=['PUT'])
+def update_customer(cid):
+    cust = Customer.query.filter_by(id=cid).first()
+    rd = request.get_json()
+    email = rd["email"]
+    if cust:
+        if cust.email != email and Customer.query.filter_by(email=email).first():
+            return {"Failed": "Duplicate email: {} provided...".format(email)}
+        cust.name = rd['name']
+        cust.age = rd['age']
+        cust.gender = rd['gender']
+        cust.email = rd['email']
+        db.session.commit()
+        return {"Success": "Customer: {} updated successfully!".format(cust.id)}
+    return {"Failed": "Customer with id: {} not available...".format(cid)}
+
+
+# http://localhost:5000/producer/customer/101
+@app.route("/producer/customer/<int:cid>", methods=['DELETE'])
+def delete_customer(cid):
+    cust = Customer.query.filter_by(id=cid).first()
+    if cust:
+        cust.active = 'N'
+        db.session.commit()
+        return {"Success": "Customer: {} deleted successfully!".format(cust.id)}
+    return {"Failed": "Customer with id: {} not available...".format(cid)}
+
+
 # http://localhost:5000/producer/address/
 @app.route("/producer/address/", methods=['POST'])
 def save_address():
@@ -144,6 +173,56 @@ def delete_address(aid):
         db.session.commit()
         return {"Success": "Address: {} deleted successfully!".format(adr.id)}
     return {"Failed": "Address with id: {} not available...".format(aid)}
+
+
+# http://localhost:5000/producer/custadr/
+@app.route("/producer/custadr/", methods=['GET'])
+def get_all_cust_adr():
+    cuad = custAdr.query.all()
+    ac = []
+    for ca in cuad:
+        ac.append(ca.as_dict())
+    return json.dumps(ac)
+
+
+# http://localhost:5000/producer/custadr/1
+@app.route("/producer/custadr/<int:id>", methods=['GET'])
+def get_single_cust_adr(id):
+    cuad = custAdr.query.filter_by(id=id).first()
+    if cuad:
+        cuad = cuad.as_dict()
+        return json.dumps(cuad)
+    return {"Failed": "Address relationship id: {} not available...".format(id)}
+
+
+# http://localhost:5000/producer/custadr/
+@app.route("/producer/custadr/", methods=['POST'])
+def save_cust_adr():
+    rd = request.get_json()
+    c1 = rd['cid']
+    calist = custAdr.query.filter_by(aid=rd['aid']).all()
+    if calist:
+        for ca in calist:
+            cid1 = ca.cid
+            if c1 == cid1:
+                return {"Failed": "address relationship of: {} already exist!".format(rd['cid'])}
+    rel = custAdr(cid=rd['cid'], aid=rd['aid'])
+    db.session.add(rel)
+    db.session.commit()
+    return {"Success": "address relationship of: {} saved successfully!".format(rd['cid'])}
+
+
+# http://localhost:5000/producer/custadr/1
+@app.route("/producer/custadr/<int:id>", methods=['PUT'])
+def update_cust_adr(id):
+    cuad = custAdr.query.filter_by(id=id).first()
+    rd = request.get_json()
+    if cuad:
+        cuad.cid = rd['cid']
+        cuad.aid = rd['aid']
+        db.session.commit()
+        return {"Success": "address relationship of: {} updated successfully!".format(id)}
+    return {"Failed": "address relationship of: {} not available...".format(id)}
 
 
 if __name__ == '__main__':

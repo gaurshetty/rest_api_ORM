@@ -38,6 +38,12 @@ class custAdr(db.Model):
     cid = db.Column("cid", db.ForeignKey("customer.id"), unique=False, nullable=False)
     aid = db.Column("aid", db.ForeignKey("address.id"), unique=False, nullable=False)
 
+    def __str__(self):
+        return f'{self.__dict__}'
+
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
 
 if __name__ == '__main__':
     db.create_all()

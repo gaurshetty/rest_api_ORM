@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Customer Information Page</title>
+</head>
+<body>
+    <h1><a href="http://localhost:5001/custadr/customer/home/">Customer Registration form</a></h1>
+    {{msg}}
+    <br><br>
+    <form action="http://localhost:5001/custadr/customer/save/" method="post">
+        Customer Id: <input type="text" name="cid" value="{{customer.id}}" readonly><br><br>
+        Customer Name: <input type="text" name="name" value="{{customer.name}}"><br><br>
+        Customer Age: <input type="text" name="age" value="{{customer.age}}"><br><br>
+        Customer Gender:
+                {% for key,value in genders.items() %}
+                    {% if key==customer.gender %}
+                        <input type="radio" value="{{key}}" name="gender" checked>:{{value}}
+                    {% else %}
+                        <input type="radio" value="{{key}}" name="gender">:{{value}}
+                    {% endif %}
+                {% endfor %} <br><br>
+        Customer Email: <input type="text" name="email" value="{{customer.email}}"><br><br>
+        Address : <select name="adr" multiple>
+                    {% for adr in addresses %}
+                        {% if adr.id == customer.aid %}
+                            <option value="{{adr.id}}" selected>{{adr.city}}</option>
+                        {% else %}
+                            <option value="{{adr.id}}">{{adr.city}}</option>
+                        {% endif %}
+                    {% endfor%}
+                    </select>
+        <br><br>
+        <input type="submit">
+    </form>
+    <br>
+    {% if customers %}
+        <table border="1">
+            <thead>
+                <th><a href="http://localhost:5001/custadr/customer/sort/id">ID</a></th>
+                <th><a href="http://localhost:5001/custadr/customer/sort/name">Name</a></th>
+                <th><a href="http://localhost:5001/custadr/customer/sort/age">Age</a></th>
+                <th>Gender</th>
+                <th>Email</th>
+                <th>Address</th>
+                <th>Action</th>
+            </thead>
+            {% for customer in customers %}
+                <tbody>
+                    <td>{{customer.id}}</td>
+                    <td>{{customer.name}}</td>
+                    <td>{{customer.age}}</td>
+                    <td>{{customer.gender}}</td>
+                    <td>{{customer.email}}</td>
+                    <td>
+                        {% for address in customer.addresses %}
+                            <font size="2">{{address.id}} &nbsp; {{address.city}} &nbsp; {{address.state}} &nbsp; {{address.pincode}}</font><br>
+                        {% endfor %}
+                    </td>
+                    <td>
+                        <a href="http://localhost:5001/custadr/customer/edit/{{customer.id}}">EDIT</a>
+                        &nbsp;&nbsp;
+                        <a href="http://localhost:5001/custadr/customer/delete/{{customer.id}}">DELETE</a>
+                    </td>
+                </tbody>
+            {% endfor %}
+        </table>
+    {% else %}
+        No Customer Records available...!
+    {% endif %}
+</body>
+</html>

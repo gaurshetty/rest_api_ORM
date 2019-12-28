@@ -1,17 +1,17 @@
-from rest_api_MTO.customer.cust_adr_api import *
-
+from flask import Flask, render_template, session, request
+from rest_api_MTM.cust_adr_api.cust_adr_controller import *
 adr = Address()
 
 
-# http://localhost:5001/address/home/
-@app.route("/address/home/", methods=["GET"])
+# http://localhost:5001/custadr/address/home/
+@app.route("/custadr/address/home/", methods=["GET"])
 def address_home():
     session['cnmsort'] = 'desc'
     return render_template("address.html", address=adr, addresses=get_all_active_addresses())
 
 
-# http://localhost:5001/address/save/
-@app.route("/address/save/", methods=["POST", "GET"])
+# http://localhost:5001/custadr/address/save/
+@app.route("/custadr/address/save/", methods=["POST", "GET"])
 def address_save_update():
     msg = ''
     adr = Address()
@@ -27,22 +27,23 @@ def address_save_update():
     return render_template("address.html", msg=msg, address=adr, addresses=get_all_active_addresses())
 
 
-# http://localhost:5001/address/edit/101
-@app.route("/address/edit/<int:aid>", methods=["GET"])
+# http://localhost:5001/custadr/address/edit/101
+@app.route("/custadr/address/edit/<int:aid>", methods=["GET"])
 def address_edit(aid):
     adr = get_single_active_address(aid)
     return render_template("address.html", address=adr, addresses=get_all_active_addresses())
 
 
-# http://localhost:5001/address/delete/101
-@app.route("/address/delete/<int:aid>", methods=["GET"])
+# http://localhost:5001/custadr/address/delete/101
+@app.route("/custadr/address/delete/<int:aid>", methods=["GET"])
 def address_delete(aid):
     adr = get_single_active_address(aid)
     msg = delete_address(aid)
     return render_template("address.html", msg=msg, address=adr, addresses=get_all_active_addresses())
 
 
-@app.route('/address/sort/id')
+# http://localhost:5001/custadr/address/sort/id
+@app.route('/custadr/address/sort/id')
 def sort_aid():
     adrlist = get_all_active_addresses()
     if session['cnmsort'] == 'desc':
@@ -54,7 +55,8 @@ def sort_aid():
     return render_template("address.html", address=adr, addresses=adrlist)
 
 
-@app.route('/address/sort/city')
+# http://localhost:5001/custadr/address/sort/city
+@app.route('/custadr/address/sort/city')
 def sort_city():
     adrlist = get_all_active_addresses()
     if session['cnmsort'] == 'desc':
@@ -66,7 +68,8 @@ def sort_city():
     return render_template("address.html", address=adr, addresses=adrlist)
 
 
-@app.route('/address/sort/pincode')
+# http://localhost:5001/custadr/address/sort/pincode
+@app.route('/custadr/address/sort/pincode')
 def sort_pincode():
     adrlist = get_all_active_addresses()
     if session['cnmsort'] == 'desc':
